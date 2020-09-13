@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "simple_toggle", "simple_toggle\simple_toggle.cproj", "{D2D0D278-E9F4-4A28-A1C0-A62EC9A8894F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2D0D278-E9F4-4A28-A1C0-A62EC9A8894F}.Debug|AVR.ActiveCfg = Debug|AVR
+		{D2D0D278-E9F4-4A28-A1C0-A62EC9A8894F}.Debug|AVR.Build.0 = Debug|AVR
+		{D2D0D278-E9F4-4A28-A1C0-A62EC9A8894F}.Release|AVR.ActiveCfg = Release|AVR
+		{D2D0D278-E9F4-4A28-A1C0-A62EC9A8894F}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

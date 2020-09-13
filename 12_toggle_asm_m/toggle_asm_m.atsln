@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "toggle_asm_m", "toggle_asm_m\toggle_asm_m.cproj", "{717B0CB4-034C-41BA-AF8A-F186A889FB92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{717B0CB4-034C-41BA-AF8A-F186A889FB92}.Debug|AVR.ActiveCfg = Debug|AVR
+		{717B0CB4-034C-41BA-AF8A-F186A889FB92}.Debug|AVR.Build.0 = Debug|AVR
+		{717B0CB4-034C-41BA-AF8A-F186A889FB92}.Release|AVR.ActiveCfg = Release|AVR
+		{717B0CB4-034C-41BA-AF8A-F186A889FB92}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
