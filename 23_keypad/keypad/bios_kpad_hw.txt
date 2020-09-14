@@ -24,7 +24,7 @@ inline void setPORTC(uint8_t v) { PORTC = (PORTC & 0xF0) | ( v & 0x0F); }
 // Row and Column low-level actions
 inline void rechargeAllLines()  { setDDRD(0b1111); setPORTD(0b1111); setDDRC(0b1111); setPORTC(0b1111); }
 inline void disconnectAllLines(){ setDDRD(0b0000); setPORTD(0b0000); setDDRC(0b0000); setPORTC(0b0000); }
-inline void SetReadRow()        { setDDRD(0b0000); setPORTD(0b1111); }
+inline void SetReadRow()        { setDDRD(______); setPORTD(______); }
 inline uint8_t getPINDshifted() { return( (PIND>>4) & 0x0F ); }
 
 uint16_t scan_keypad()
@@ -61,25 +61,25 @@ uint16_t scan_keypad()
     rechargeAllLines();
     delay_digital_io_change();
     // scan the third / top  row, get all columns
-    SetReadRow(); setDDRC(0b1000); setPORTC(0b0111);
+    SetReadRow(); setDDRC(______); setPORTC(______);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
     rechargeAllLines();
     delay_digital_io_change();
     // scan the second row
-    SetReadRow(); setDDRC(0b0100); setPORTC(0b1011);
+    SetReadRow(); setDDRC(______); setPORTC(______);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
     rechargeAllLines();
     delay_digital_io_change();
     // scan the first row
-    SetReadRow(); setDDRC(0b0010); setPORTC(0b1101);
+    SetReadRow(); setDDRC(______); setPORTC(______);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
     rechargeAllLines();
     delay_digital_io_change();
     // scan the zeroth / bottom row
-    SetReadRow(); setDDRC(0b0001); setPORTC(0b1110);
+    SetReadRow(); setDDRC(______); setPORTC(______);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
 
