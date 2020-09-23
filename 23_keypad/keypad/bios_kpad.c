@@ -57,28 +57,31 @@ uint16_t scan_keypad()
 
 
     uint16_t status = KEYPAD_NONE;
-    // recharge all
+
+    // scan the third / bottom row, get all columns
     rechargeAllLines();
     delay_digital_io_change();
-    // scan the third / top  row, get all columns
     SetReadRow(); setDDRC(0b1000); setPORTC(0b0111);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
+
+    // scan the second row
     rechargeAllLines();
     delay_digital_io_change();
-    // scan the second row
     SetReadRow(); setDDRC(0b0100); setPORTC(0b1011);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
+
+    // scan the first row
     rechargeAllLines();
     delay_digital_io_change();
-    // scan the first row
     SetReadRow(); setDDRC(0b0010); setPORTC(0b1101);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
+
+    // scan the zeroth / top row
     rechargeAllLines();
     delay_digital_io_change();
-    // scan the zeroth / bottom row
     SetReadRow(); setDDRC(0b0001); setPORTC(0b1110);
     delay_digital_io_change();
     status = (status<<4) | (0x0F & ~ getPINDshifted() );
