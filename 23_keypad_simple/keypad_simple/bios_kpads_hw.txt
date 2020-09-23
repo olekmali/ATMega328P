@@ -27,7 +27,7 @@ inline void disconnectAllLines(){ setDDRD(0b0000); setPORTD(0b0000); setDDRC(0b0
 inline void SetReadRow()        { setDDRD(______); setPORTD(______); }
 inline uint8_t getPINDshifted() { return( (PIND>>4) & 0x0F ); }
 
-uint16_t scan_keypad()
+char keypressed(void)
 {
     // save the status of the ports before running the keypad scan
     // this may be needed because we share some lines with other peripherals
@@ -56,32 +56,84 @@ uint16_t scan_keypad()
  // or 0000     1111        1111    0000 -- for PIN change interrupt driven keypad
 
 
-    uint16_t status = KEYPAD_NONE;
-    // recharge all
+    uint8_t scanned;
+    uint8_t status = KEY_NONE;
+
+    // scan the third / bottom row, get all columns
     rechargeAllLines();
     delay_digital_io_change();
-    // scan the third / top  row, get all columns
     SetReadRow(); setDDRC(______); setPORTC(______);
     delay_digital_io_change();
-    status = (status<<4) | (0x0F & ~ getPINDshifted() );
-    rechargeAllLines();
-    delay_digital_io_change();
+    scanned = 0x0F & ~ getPINDshifted();
+    if (scanned && (status!=KEY_NONE) ) {
+        status = KEY_MANY;
+    } else {
+        switch (scanned) {
+            case 0b00000000: break;
+            case 0b00000001: status = ______;  break;
+            case 0b00000010: status = ______;  break;
+            case 0b00000100: status = ______;  break;
+            case 0b00001000: status = ______;  break;
+            default:         status = KEY_MANY;
+        }
+    }
+
     // scan the second row
-    SetReadRow(); setDDRC(______); setPORTC(______);
-    delay_digital_io_change();
-    status = (status<<4) | (0x0F & ~ getPINDshifted() );
     rechargeAllLines();
     delay_digital_io_change();
+    SetReadRow(); setDDRC(______); setPORTC(______);
+    delay_digital_io_change();
+    scanned = 0x0F & ~ getPINDshifted();
+    if (scanned && (status!=KEY_NONE) ) {
+        status = KEY_MANY;
+    } else {
+        switch (scanned) {
+            case 0b00000000: break;
+            case 0b00000001: status = ______;  break;
+            case 0b00000010: status = ______;  break;
+            case 0b00000100: status = ______;  break;
+            case 0b00001000: status = ______;  break;
+            default:         status = KEY_MANY;
+        }
+    }
+
     // scan the first row
-    SetReadRow(); setDDRC(______); setPORTC(______);
-    delay_digital_io_change();
-    status = (status<<4) | (0x0F & ~ getPINDshifted() );
     rechargeAllLines();
     delay_digital_io_change();
-    // scan the zeroth / bottom row
     SetReadRow(); setDDRC(______); setPORTC(______);
     delay_digital_io_change();
-    status = (status<<4) | (0x0F & ~ getPINDshifted() );
+    scanned = 0x0F & ~ getPINDshifted();
+    if (scanned && (status!=KEY_NONE) ) {
+        status = KEY_MANY;
+    } else {
+        switch (scanned) {
+            case 0b00000000: break;
+            case 0b00000001: status = ______;  break;
+            case 0b00000010: status = ______;  break;
+            case 0b00000100: status = ______;  break;
+            case 0b00001000: status = ______;  break;
+            default:         status = KEY_MANY;
+        }
+    }
+
+    // scan the zeroth / top row
+    rechargeAllLines();
+    delay_digital_io_change();
+    SetReadRow(); setDDRC(______); setPORTC(______);
+    delay_digital_io_change();
+    scanned = 0x0F & ~ getPINDshifted();
+    if (scanned && (status!=KEY_NONE) ) {
+        status = KEY_MANY;
+    } else {
+        switch (scanned) {
+            case 0b00000000: break;
+            case 0b00000001: status = ______;  break;
+            case 0b00000010: status = ______;  break;
+            case 0b00000100: status = ______;  break;
+            case 0b00001000: status = ______;  break;
+            default:         status = KEY_MANY;
+        }
+    }
 
 //  disconnectAllLines();
 
@@ -93,31 +145,6 @@ uint16_t scan_keypad()
     PORTC = s_porc;
 
     return(status);
-}
-
-char keypressed(void)
-{
-    static const char matrix[16] = {    KEY_A, KEY_3, KEY_2, KEY_1,
-                                        KEY_B, KEY_6, KEY_5, KEY_4,
-                                        KEY_C, KEY_9, KEY_8, KEY_7,
-                                        KEY_D, KEY_H, KEY_0, KEY_S
-                                    };
-    // Possible test question: what is the use for the lookup table above
-    uint8_t  keycnt = 0;
-    uint8_t  keymin = KEY_NONE;
-    uint16_t keys = scan_keypad();
-    if (keys!=KEYPAD_NONE) {
-        for (uint8_t i=0; i<16; i++) {
-            if ( keys & 0x01 /* !=0 */ ) {
-                keymin=matrix[i];
-                keycnt++;
-            }
-            keys = keys >> 1;
-        }
-    }
-    if (keycnt<2)   return(keymin);
-    else            return(KEY_MANY);
-    // Possible test question: what happens if we always return(keymin) regardless of keycnt value?
 }
 
 char getkey(void)

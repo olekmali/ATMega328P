@@ -59,11 +59,9 @@ char keypressed(void)
     uint8_t scanned;
     uint8_t status = KEY_NONE;
 
-    // recharge all
+    // scan the third / bottom row, get all columns
     rechargeAllLines();
     delay_digital_io_change();
-
-    // scan the third / bottom row, get all columns
     SetReadRow(); setDDRC(0b1000); setPORTC(0b0111);
     delay_digital_io_change();
     scanned = 0x0F & ~ getPINDshifted();
@@ -79,10 +77,10 @@ char keypressed(void)
             default:         status = KEY_MANY;
         }
     }
-    rechargeAllLines();
-    delay_digital_io_change();
 
     // scan the second row
+    rechargeAllLines();
+    delay_digital_io_change();
     SetReadRow(); setDDRC(0b0100); setPORTC(0b1011);
     delay_digital_io_change();
     scanned = 0x0F & ~ getPINDshifted();
@@ -98,10 +96,10 @@ char keypressed(void)
             default:         status = KEY_MANY;
         }
     }
-    rechargeAllLines();
-    delay_digital_io_change();
 
     // scan the first row
+    rechargeAllLines();
+    delay_digital_io_change();
     SetReadRow(); setDDRC(0b0010); setPORTC(0b1101);
     delay_digital_io_change();
     scanned = 0x0F & ~ getPINDshifted();
@@ -117,10 +115,10 @@ char keypressed(void)
             default:         status = KEY_MANY;
         }
     }
-    rechargeAllLines();
-    delay_digital_io_change();
 
     // scan the zeroth / top row
+    rechargeAllLines();
+    delay_digital_io_change();
     SetReadRow(); setDDRC(0b0001); setPORTC(0b1110);
     delay_digital_io_change();
     scanned = 0x0F & ~ getPINDshifted();
