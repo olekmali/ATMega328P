@@ -6,13 +6,20 @@
 #include "bios_leds.h"
 
 void MyInterruptPinChangedFunction () {
+    // leds_set( leds_get() ^ 0b00100000 ); // START toggle a pin in case you an oscilloscope to meausre time spent here
+
     // Note: this is called from an interrupt -- no waiting inside
     // OK, just don't wait too long as the lab is in the remote mode
     // and the lab kit does not have capacitors for debouncing ":-("
 
     // this is an example that just does something visible
     // replace with your application code as needed
-    leds_set( ~leds_get() );
+    uint8_t t = leds_get();
+    t = t ^ 0b00010000;
+    leds_set( t );
+
+    // leds_set( leds_get() ^ 0b00100000 ); // STOP toggle a pin in case you an oscilloscope to meausre time spent here
+
     delay(1); // use of such long delay here is an abomination!
 }
 
