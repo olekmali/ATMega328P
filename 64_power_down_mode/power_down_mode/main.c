@@ -69,12 +69,12 @@ int main(void)
 
 
         // START make the if statement and sleep_enable one atomic operation
-        cli();                      // clear all interrupts
+        cli();                  // clear all interrupts
         if (0==countdown_to_sleep)
         {
             sleep_enable();
-            SREG = sreg_save;       // STOP1 enable prior interrupts - make the if statement and sleep_enable one atomic operation
-            led8_set(0);
+            sei();              // STOP1 enable prior interrupts - make the if statement and sleep_enable one atomic operation
+            leds_set(0);
             sleep_cpu();
             sleep_disable();
         }
