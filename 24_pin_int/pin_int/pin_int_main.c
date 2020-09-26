@@ -1,6 +1,7 @@
 //* Simple test to test pin changed interrupt on PORTC *
 #include <avr/io.h>
 #include <avr/interrupt.h>
+//#include <avr/sleep.h>
 
 #include "bios_pinc_int.h"
 #include "bios_leds.h"
@@ -33,6 +34,17 @@ void setup_PC012() {
 }
 
 
+//  inline void sleep_On() {
+//  //  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+//      set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+//      sleep_enable();
+//      sleep_cpu();
+//  }
+//
+//  inline void sleep_Off() {
+//      sleep_disable();
+//  }
+
 
 int main(void)
 {
@@ -42,6 +54,7 @@ int main(void)
     sei(); // enable all interrupts
     while (1)
     {
+//      sleep_On();
     }
 }
 

@@ -58,6 +58,7 @@ int main(void)
     External_Int1_initialize(EXT_INT_MODE_pin_low, MyExternalIntFN);
 
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);    // Note: this will not awake on Timer1 event
+    // set_sleep_mode(SLEEP_MODE_PWR_SAVE); // Note: this will awake on Timer1 event
 
     sei();  // enable global interrupts, all circuitry must be initialized prior to this event
 
@@ -71,10 +72,11 @@ int main(void)
         cli();                      // clear all interrupts
         if (0==countdown_to_sleep)
         {
+            //  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
             sleep_enable();     // or   MCUCR  |= (1 << SE);
             sei();              // STOP1 enable prior interrupts - make the if statement and sleep_enable one atomic operation
             sleep_cpu();        // or   __asm volatile ("sleep");
-           sleep_disable();     // or   MCUCR &= ~(1<<SE);
+            sleep_disable();    // or   MCUCR &= ~(1<<SE);
         }
         sei();                  // STOP2 enable prior interrupts - make the if statement and sleep_enable one atomic operation
     }
