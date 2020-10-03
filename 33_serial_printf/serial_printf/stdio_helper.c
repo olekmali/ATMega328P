@@ -14,7 +14,7 @@ int	avr_putchar(char c, FILE *stream)
 int	avr_getchar(FILE *stream)
 {
     static uint8_t newline = 0;
-    // ^^^ static menas that the variable is actually global but it is visible only inside the current block {}
+    // ^^^ static means that the variable is actually global but it is visible only inside the current block {}
     // This variable is initialized ONLY ONCE to 0 and then it holds its value between the function is called
 
     if ( !newline )

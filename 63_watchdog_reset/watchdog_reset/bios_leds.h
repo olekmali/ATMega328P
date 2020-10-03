@@ -15,6 +15,4 @@ void    leds_shutdown   (void);
 uint8_t leds_get        (void);
 void    leds_set        (uint8_t number);
 
-void delay (unsigned short int milliseconds);
-
 #endif /* BIOS_LEDS_H_ */

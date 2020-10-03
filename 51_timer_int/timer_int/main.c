@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <avr/interrupt.h>
 
+#define F_CPU (16000000UL)
+#include <util/delay.h>
+
 
 //------------------------------------------------------------------------------------
 // Global constant(s)
@@ -107,7 +110,7 @@ int main3(void)
             sei();
         }
         state = new_state;
-        delay(20);
+        _delay_ms(20);
     }
 
     return(0);
@@ -138,7 +141,7 @@ int main4(void)
             // sei();
         }
         state = new_state;
-        delay(20);
+        _delay_ms(20);
     }
 
     return(0);

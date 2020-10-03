@@ -5,7 +5,8 @@
 #include <avr/io.h>
 #include <string.h> // used for strlen in some tests
 
-
+#define F_CPU (16000000UL)
+#include <util/delay.h>
 
 int main_test1_putc_connection(void)
 {
@@ -14,7 +15,7 @@ int main_test1_putc_connection(void)
     while (1)
     {
         uart0_putc('A');
-        delay(1000);    // remove the delay to check what is the transmission speed
+        _delay_ms(1000);    // remove the delay to check what is the transmission speed
                         // limited only bu the UART transmission speed
     }
     return(0);
@@ -33,7 +34,7 @@ int main_test2_puts(void)
                         // if interested, see also: https://en.wikipedia.org/wiki/Newline
                         // also try to put \r\n in the middle of the text
                         // also try to put \0 in the middle of the text (-- will cut off the remainder)
-        delay(5000);
+        _delay_ms(5000);
     }
     return(0);
 }
@@ -51,7 +52,7 @@ int main_test3_write(void)
     while (1)
     {
         uart0_write(str, len); // binary write will write anything, including \0 in the middle
-        delay(5000);
+        _delay_ms(5000);
     }
     return(0);
 }
@@ -69,7 +70,7 @@ int main_test4_readyRX(void)
         if ( uart0_ready_RX() )
         {
             leds_set( uart0_getc() );   // display character ASCII code as number
-            delay(1000);                // and keep on the display for one second
+            _delay_ms(1000);                // and keep on the display for one second
 
             // note that only two characters can be kept in a receiving buffer
             // while the program does not read from the UART. All else is lost
@@ -207,7 +208,7 @@ int main_testB_lower_speed(void)
     while (1)
     {
         uart0_puts("sample text\r\n");
-        delay(5000);
+        _delay_ms(5000);
     }
     return(0);
 }
@@ -221,7 +222,7 @@ int main_testC_higher_speed(void)
     while (1)
     {
         uart0_puts("sample text\r\n");
-        delay(5000);
+        _delay_ms(5000);
     }
     return(0);
 }
@@ -238,7 +239,7 @@ int main_testD_ascii_table(void)
     {
         leds_set(c);
         uart0_putc(c);
-        delay(1000);
+        _delay_ms(1000);
         c++; // warning - uint8_t should be used instead of char
         // because we intend to roll over at 128 or 256
         // and signed char behavior is undefined at that point

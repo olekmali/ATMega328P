@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <avr/interrupt.h>
 
+#define F_CPU (16000000UL)
+#include <util/delay.h>
+
 
 void MyCharReceivedFN (char c)
 {
@@ -36,7 +39,7 @@ int main(void)
         leds_set( leds_get()^0b00100000 );  // indicate that the main loop is "still alive"
         sei();
 
-        delay(500);
+        _delay_ms(500);
     }
     return(0);
 }

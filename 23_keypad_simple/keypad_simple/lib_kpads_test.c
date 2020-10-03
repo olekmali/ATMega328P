@@ -3,6 +3,9 @@
 #include "bios_leds.h"
 #include "bios_kpads.h"
 
+#define F_CPU (16000000UL)
+#include <util/delay.h>
+
 int test0_getkey_value(void)
 {
     uint8_t toggle = 0;
@@ -26,7 +29,7 @@ int test1_count_up(void)
     {
         i++;
         leds_set(i);
-        delay(100);
+        _delay_ms(100);
     }
     return(0);
 }
@@ -41,7 +44,7 @@ int test2_shift(void)
         i = i<<1;
         if ( i > 16 ) i = 1; // make it use only 5 bits
         leds_set(i);
-        delay(100);
+        _delay_ms(100);
     }
     return(0);
 }

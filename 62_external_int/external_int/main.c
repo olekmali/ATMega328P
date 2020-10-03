@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <avr/interrupt.h>
 
+#define F_CPU (16000000UL)
+#include <util/delay.h>
+
 
 void MyFN45 (void)
 {
@@ -53,7 +56,7 @@ int main(void)
         cli();
         leds_set( (leds_get() & 0xF0 ) | keep_busy );
         sei();
-        delay(100);
+        _delay_ms(500);
 
     }
 

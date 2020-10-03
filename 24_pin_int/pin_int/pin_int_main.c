@@ -2,11 +2,14 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#define F_CPU (16000000UL)
+#include <util/delay.h>
+
 #include "bios_pinc_int.h"
 #include "bios_leds.h"
 
 void MyInterruptPinChangedFunction () {
-    // leds_set( leds_get() ^ 0b00100000 ); // START toggle a pin in case you an oscilloscope to meausre time spent here
+    leds_set( leds_get() | 0b00100000 ); // START set pin in case you an oscilloscope to measure time spent here
 
     // Note: this is called from an interrupt -- no waiting inside
     // OK, just don't wait too long as the lab is in the remote mode
@@ -18,9 +21,8 @@ void MyInterruptPinChangedFunction () {
     t = t ^ 0b00010000;
     leds_set( t );
 
-    // leds_set( leds_get() ^ 0b00100000 ); // STOP toggle a pin in case you an oscilloscope to meausre time spent here
-
-    delay(1); // use of such long delay here is an abomination!
+    leds_set( leds_get() & ~0b00100000 ); // STOP reset pin in case you an oscilloscope to measure time spent here
+    _delay_ms(1); // use of almost any delay, and especially such long delay here is an abomination!
 }
 
 
