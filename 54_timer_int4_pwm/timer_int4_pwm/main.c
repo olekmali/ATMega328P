@@ -17,14 +17,18 @@
 #define INT_FREQUENCY       (PWM_FREQUENCY * PWM_RESOLUTION)
 #define MAIN_LOOP_FREQUENCY 100
 
+typedef uint8_t pwmcnt_t;
+    //  ^^^^^^ make sure that ( INT_FREQUENCY / MAIN_LOOP_FREQUENCY ) fits the variable range! 
+    //  ^^^^^^ make sure that ( PWM_RESOLUTION ) fits the variable range! 
+    // uint8_t - 255, uint16_t - 65535, uint32_t - 2^16-1
 
 //------------------------------------------------------------------------------------
 // Global variable(s) used as bridge to pass parameters to the interrupts
 //------------------------------------------------------------------------------------
 static volatile uint8_t     semaphore = 0;  // volatile keyword is very important here!
 
-static volatile uint8_t     pwm0 = 0;  // volatile keyword is important here!
-static volatile uint8_t     pwm1 = 0;  // volatile keyword is important here!
+static volatile pwmcnt_t    set_pwm0 = 0;  // volatile keyword is important here!
+static volatile pwmcnt_t    set_pwm1 = 0;  // volatile keyword is important here!
 // Note: if a shared variable is larger than 8bit then its update is not so called atomic
 //      and interrupts have to be suspended while a variable is modified in main function
 
@@ -37,10 +41,20 @@ void MyTimerFN (void)
     //              - no excessive loops
     //              - no time consuming tasks
     //              - no interrupt enabling
+    { // this block for debugging / verification only
+        static uint16_t verify = 0;         // data type needs to hold value of INT_FREQUENCY / 2
+        if ( 0 == verify ) {
+            verify = (INT_FREQUENCY / 2);   // This should make LED.5 blink with a period of 1 sec.
+            leds_set( leds_get() ^ B_L5 );
+        } else {
+            verify--;
+        }
+    }
 
-    static uint8_t pwm_rate0 = 0;   // PWM rate only for the current time period
-    static uint8_t pwm_rate1 = 0;   // PWM rate only for the current time period
-    static uint8_t pwm_counter = 0; // note: static == hidden global variable
+
+    static pwmcnt_t pwm_rate0 = 0;   // PWM rate only for the current time period
+    static pwmcnt_t pwm_rate1 = 0;   // PWM rate only for the current time period
+    static pwmcnt_t pwm_counter = 0; // note: static == hidden global variable
     //     ^^^^^^^^ make sure that ( SAMPLING__FRQ / MAIN_LOOP_FREQUENCY )
     // fits the variable range! uint8_t - 255, uint16_t - 65535
     if (0<pwm_counter) {
@@ -48,8 +62,8 @@ void MyTimerFN (void)
     } else {
         pwm_counter = (PWM_RESOLUTION-1);
         // we do not want PWM rate to change in the middle of a PWM cycle
-        pwm_rate0 = pwm0;
-        pwm_rate1 = pwm1;
+        pwm_rate0 = set_pwm0;
+        pwm_rate1 = set_pwm1;
     }
 
     // PWM action section
@@ -67,7 +81,7 @@ void MyTimerFN (void)
     leds_set(curLEDs);
 
 
-    static uint8_t semaphore_counter = 0; // note: static == hidden global variable
+    static pwmcnt_t semaphore_counter = 0; // note: static == hidden global variable
     //     ^^^^^^^^ make sure that ( SAMPLING__FRQ / MAIN_LOOP_FREQUENCY )
     // fits the variable range! uint8_t - 255, uint16_t - 65535
     if (0<semaphore_counter) {
@@ -89,8 +103,8 @@ int main(void)
 
     // Set the PWM rates for the PWM channels
     // Note: PWMs needs to be in range 0...PWM_RESOLUTION, not in %
-    pwm0 = 0;
-    pwm1 = PWM_RESOLUTION;
+    uint8_t level0 = 0;
+    uint8_t level1 = PWM_RESOLUTION; // = 100%
 
     sei();
 
@@ -108,22 +122,25 @@ int main(void)
 
         // cycle through five PWM levels with one button
         if ( (but_chg & B_K4) !=0 ) { // if ( (but_chg & 0b00000001) !=0 )
-            if (pwm0<PWM_RESOLUTION) {
-                pwm0++;
+            if (level0<PWM_RESOLUTION) {
+                level0++;
             } else {
-                pwm0 = 0;
+                level0 = 0;
             }
+            set_pwm0 = level0;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K6) !=0 ) { // if ( (but_chg & 0b00000100) !=0 )
-            if (pwm1<PWM_RESOLUTION) {
-                pwm1++;
+            if (level1<PWM_RESOLUTION) {
+                level1++;
+                set_pwm1 = level1;
             } // else nothing;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K7) !=0 ) { // if ( (but_chg & 0b00001000) !=0 )
-            if (pwm1>0) {
-                pwm1--;
+            if (level1>0) {
+                level1--;
+                set_pwm1 = level1;
             } // else nothing;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
