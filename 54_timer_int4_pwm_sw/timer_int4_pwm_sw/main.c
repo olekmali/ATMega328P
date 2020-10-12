@@ -12,21 +12,22 @@
 //------------------------------------------------------------------------------------
 typedef uint16_t pwmcnt_t;
 
-#define PWM_FREQUENCY       50L
-#define SERVO_MAX_US      2500L
-#define SERVO_MIN_US       500L
-#define SERVO_RESOLUTION   10
+#define SECOND_IN_US    1000000L
+#define PWM_FREQUENCY        50L
+#define SERVO_MIN_US        500L
+#define SERVO_STEPS           3
+#define SERVO_STEP_US       500L
 
-#define SERVO_START  ( (INT_FREQUENCY * SERVO_MIN_US) / 1000000L)
-#define SERVO_STEP   ( (SERVO_MAX_US-SERVO_MIN_US) * INT_FREQUENCY / SERVO_RESOLUTION / 1000000L )
-#define PWM_RESOLUTION      ( (1000000L / (SERVO_MAX_US-SERVO_MIN_US) ) * SERVO_RESOLUTION /  PWM_FREQUENCY )
-#define INT_FREQUENCY       (PWM_FREQUENCY * PWM_RESOLUTION)
+#define PWM_RESOLUTION  ( SECOND_IN_US  / SERVO_STEP_US )
+#define INT_FREQUENCY   ( PWM_FREQUENCY * PWM_RESOLUTION )
+#define PWM_SERVO_START ( SERVO_MIN_US  * INT_FREQUENCY / SECOND_IN_US )
+#define PWM_SERVO_STEP  ( SERVO_STEP_US * INT_FREQUENCY / SECOND_IN_US )
 
 #define MAIN_LOOP_FREQUENCY 100
 
-uint16_t position_servo(uint8_t position)
+pwmcnt_t position_servo(uint8_t position)
 {
-    return( SERVO_START + position * SERVO_STEP );
+    return( PWM_SERVO_START + position * PWM_SERVO_STEP );
 }
 
 
@@ -36,8 +37,8 @@ uint16_t position_servo(uint8_t position)
 //------------------------------------------------------------------------------------
 static volatile uint8_t     semaphore = 0;  // volatile keyword is very important here!
 
-static volatile uint16_t    set_pwm0 = 0;  // volatile keyword is important here!
-static volatile uint16_t    set_pwm1 = 0;  // volatile keyword is important here!
+static volatile pwmcnt_t    set_pwm0 = 0;  // volatile keyword is important here!
+static volatile pwmcnt_t    set_pwm1 = 0;  // volatile keyword is important here!
 // Note: if a shared variable is larger than 8bit then its update is not so called atomic
 //      and interrupts have to be suspended while a variable is modified in main function
 
@@ -51,9 +52,9 @@ void MyTimerFN (void)
     //              - no time consuming tasks
     //              - no interrupt enabling
     { // this block for debugging / verification only
-        static uint16_t verify = 0;         // data type needs to hold value of INT_FREQUENCY / 2
+        static pwmcnt_t verify = 0;         // data type needs to hold value of INT_FREQUENCY / 2
         if ( 0 == verify ) {
-            verify = (INT_FREQUENCY / 2);   // This should make LED.5 blink with a period of 1 sec.
+            verify = (pwmcnt_t)(INT_FREQUENCY / 2);   // This should make LED.5 blink with a period of 1 sec.
             leds_set( leds_get() ^ B_L5 );
         } else {
             verify--;
@@ -61,15 +62,15 @@ void MyTimerFN (void)
     }
 
 
-    static uint16_t pwm_rate0 = 0;   // PWM rate only for the current time period
-    static uint16_t pwm_rate1 = 0;   // PWM rate only for the current time period
-    static uint16_t pwm_counter = 0; // note: static == hidden global variable
+    static pwmcnt_t pwm_rate0 = 0;   // PWM rate only for the current time period
+    static pwmcnt_t pwm_rate1 = 0;   // PWM rate only for the current time period
+    static pwmcnt_t pwm_counter = 0; // note: static == hidden global variable
     //     ^^^^^^^^ make sure that ( SAMPLING__FRQ / MAIN_LOOP_FREQUENCY )
     // fits the variable range! uint8_t - 255, uint16_t - 65535
     if (0<pwm_counter) {
         pwm_counter--;
     } else {
-        pwm_counter = (PWM_RESOLUTION-1);
+        pwm_counter = PWM_RESOLUTION;
         // we do not want PWM rate to change in the middle of a PWM cycle
         pwm_rate0 = set_pwm0;
         pwm_rate1 = set_pwm1;
@@ -90,7 +91,7 @@ void MyTimerFN (void)
     leds_set(curLEDs);
 
     // synchronizing the main loop
-    static uint16_t semaphore_counter = 0; // note: static == hidden global variable
+    static pwmcnt_t semaphore_counter = 0; // note: static == hidden global variable
     //     ^^^^^^^^ make sure that ( SAMPLING__FRQ / MAIN_LOOP_FREQUENCY )
     // fits the variable range! uint8_t - 255, uint16_t - 65535
     if (0<semaphore_counter) {
@@ -109,12 +110,12 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( INT_FREQUENCY , MyTimerFN, timer_prescale_8 );
+    Timer1_initialize( INT_FREQUENCY , MyTimerFN, timer_prescale_1 );
 
     // Set the PWM rates for the PWM channels
     // Note: PWMs needs to be in range 0...PWM_RESOLUTION, not in %
     uint8_t sw_level0 = 0;                  // = 0%
-    uint8_t sw_level1 = SERVO_RESOLUTION;   // = 100%
+    uint8_t sw_level1 = SERVO_STEPS;        // = 100%
     set_pwm0 = position_servo(sw_level0);
     set_pwm1 = position_servo(sw_level1);
 
@@ -134,7 +135,7 @@ int main(void)
 
         // cycle through five PWM levels with one button
         if ( (but_chg & B_K4) !=0 ) { // if ( (but_chg & 0b00000001) !=0 )
-            if (sw_level0<SERVO_RESOLUTION) {
+            if (sw_level0<SERVO_STEPS) {
                 sw_level0++;
             } else {
                 sw_level0 = 0;
@@ -144,7 +145,7 @@ int main(void)
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K6) !=0 ) { // if ( (but_chg & 0b00000100) !=0 )
-            if (sw_level1<SERVO_RESOLUTION) {
+            if (sw_level1<SERVO_STEPS) {
                 sw_level1++;
                 set_pwm1 = position_servo(sw_level1);
             } // else nothing;
