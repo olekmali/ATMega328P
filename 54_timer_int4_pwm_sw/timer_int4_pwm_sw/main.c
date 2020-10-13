@@ -10,18 +10,16 @@
 //------------------------------------------------------------------------------------
 // Global constant(s)
 //------------------------------------------------------------------------------------
-typedef uint16_t pwmcnt_t;
+typedef uint8_t pwmcnt_t;
 
-#define SECOND_IN_US    1000000L
 #define PWM_FREQUENCY        50L
 #define SERVO_MIN_US        500L
-#define SERVO_STEPS           3
-#define SERVO_STEP_US       500L
+#define SERVO_STEPS          10
 
-#define PWM_RESOLUTION  ( SECOND_IN_US  / SERVO_STEP_US )
+#define PWM_RESOLUTION      200     // 0.5%
 #define INT_FREQUENCY   ( PWM_FREQUENCY * PWM_RESOLUTION )
-#define PWM_SERVO_START ( SERVO_MIN_US  * INT_FREQUENCY / SECOND_IN_US )
-#define PWM_SERVO_STEP  ( SERVO_STEP_US * INT_FREQUENCY / SECOND_IN_US )
+#define PWM_SERVO_START       5     // 2.5%
+#define PWM_SERVO_STEP        2     // 1.0%
 
 #define MAIN_LOOP_FREQUENCY 100
 
@@ -52,9 +50,9 @@ void MyTimerFN (void)
     //              - no time consuming tasks
     //              - no interrupt enabling
     { // this block for debugging / verification only
-        static pwmcnt_t verify = 0;         // data type needs to hold value of INT_FREQUENCY / 2
+        static uint16_t verify = 0;         // data type needs to hold value of INT_FREQUENCY / 2
         if ( 0 == verify ) {
-            verify = (pwmcnt_t)(INT_FREQUENCY / 2);   // This should make LED.5 blink with a period of 1 sec.
+            verify = (uint16_t)(INT_FREQUENCY / 2);   // This should make LED.5 blink with a period of 1 sec.
             leds_set( leds_get() ^ B_L5 );
         } else {
             verify--;
@@ -140,21 +138,27 @@ int main(void)
             } else {
                 sw_level0 = 0;
             }
+            cli();
             set_pwm0 = position_servo(sw_level0);
+            sei();
 
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K6) !=0 ) { // if ( (but_chg & 0b00000100) !=0 )
             if (sw_level1<SERVO_STEPS) {
                 sw_level1++;
+                cli();
                 set_pwm1 = position_servo(sw_level1);
+                sei();
             } // else nothing;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K7) !=0 ) { // if ( (but_chg & 0b00001000) !=0 )
             if (sw_level1>0) {
                 sw_level1--;
+                cli();
                 set_pwm1 = position_servo(sw_level1);
+                sei();
             } // else nothing;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
