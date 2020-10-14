@@ -10,17 +10,20 @@
 //------------------------------------------------------------------------------------
 // Global constant(s)
 //------------------------------------------------------------------------------------
-#define PWM_FREQUENCY       1000L
-#define PWM_RESOLUTION      5
+#define PWM_FREQUENCY      1000L
+#define PWM_RESOLUTION        5
                         //  ^^^ PWM resolution which is ( 100% / PWM_RESOLUTION% )
                         //  ^^^ In this case it is 20%, the levels are 0% 20% 40% 60% 80% 100%
 #define INT_FREQUENCY       (PWM_FREQUENCY * PWM_RESOLUTION)
 #define MAIN_LOOP_FREQUENCY 100
 
 typedef uint8_t pwmcnt_t;
-    //  ^^^^^^ make sure that ( INT_FREQUENCY / MAIN_LOOP_FREQUENCY ) fits the variable range! 
-    //  ^^^^^^ make sure that ( PWM_RESOLUTION ) fits the variable range! 
+    //  ^^^^^^ make sure that ( INT_FREQUENCY / MAIN_LOOP_FREQUENCY ) fits the variable range!
+    //  ^^^^^^ make sure that ( PWM_RESOLUTION ) fits the variable range!
     // uint8_t - 255, uint16_t - 65535, uint32_t - 2^16-1
+
+#define PWM_LEVEL_MIN 0
+#define PWM_LEVEL_MAX 5
 
 //------------------------------------------------------------------------------------
 // Global variable(s) used as bridge to pass parameters to the interrupts
@@ -81,7 +84,7 @@ void MyTimerFN (void)
     leds_set(curLEDs);
 
 
-    static pwmcnt_t semaphore_counter = 0; // note: static == hidden global variable
+    static uint16_t semaphore_counter = 0; // note: static == hidden global variable
     //     ^^^^^^^^ make sure that ( SAMPLING__FRQ / MAIN_LOOP_FREQUENCY )
     // fits the variable range! uint8_t - 255, uint16_t - 65535
     if (0<semaphore_counter) {
@@ -122,23 +125,23 @@ int main(void)
 
         // cycle through five PWM levels with one button
         if ( (but_chg & B_K4) !=0 ) { // if ( (but_chg & 0b00000001) !=0 )
-            if (level0<PWM_RESOLUTION) {
+            if ( level0 < PWM_LEVEL_MAX ) {
                 level0++;
             } else {
-                level0 = 0;
+                level0 = PWM_LEVEL_MIN;
             }
             set_pwm0 = level0;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K6) !=0 ) { // if ( (but_chg & 0b00000100) !=0 )
-            if (level1<PWM_RESOLUTION) {
+            if ( level1 < PWM_LEVEL_MAX ) {
                 level1++;
                 set_pwm1 = level1;
             } // else nothing;
         } // else nothing. Technically several buttons may be depressed during the same time interval
 
         if ( (but_chg & B_K7) !=0 ) { // if ( (but_chg & 0b00001000) !=0 )
-            if (level1>0) {
+            if ( level1 > PWM_LEVEL_MIN ) {
                 level1--;
                 set_pwm1 = level1;
             } // else nothing;
