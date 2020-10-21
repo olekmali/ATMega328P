@@ -1,4 +1,4 @@
-//* Simple test to test pin changed interrupt on PORTC *
+//* Simple test to sleep and test pin changed interrupt on PORTC *
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
