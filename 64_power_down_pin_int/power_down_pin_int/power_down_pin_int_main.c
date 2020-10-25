@@ -6,11 +6,29 @@
 #include "bios_pinc_int.h"
 #include "bios_leds.h"
 
+//------------------------------------------------------------------------------------
+// HAL Functions
+//------------------------------------------------------------------------------------
+inline void sleep_On() {
+    //  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+    sleep_enable();
+    sleep_cpu();
+}
+
+inline void sleep_Off() {
+    sleep_disable();
+}
+
+
+//------------------------------------------------------------------------------------
+// Pin Changed Interrupt Functionality
+//------------------------------------------------------------------------------------
 void MyInterruptPinChangedFunction () {
     // this is an example that just does something visible
     // replace with your application code as needed
     uint8_t t = leds_get();
-    t = t ^ 0b00010000;
+    t = t ^ B_L0;
     leds_set( t );
 
 }
@@ -40,17 +58,6 @@ void setup_Unused_Pins() {
     PORTD |= 0b11111100; // set with pull-up resistors
 }
 
-inline void sleep_On() {
-//  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-    set_sleep_mode(SLEEP_MODE_PWR_SAVE);
-    sleep_enable();
-    sleep_cpu();
-}
-
-inline void sleep_Off() {
-    sleep_disable();
-}
-
 
 int main(void)
 {
@@ -62,6 +69,15 @@ int main(void)
     while (1)
     {
       sleep_On();
+
+        {   // the code fragment below is for illustration purposes only
+            // it indicates that the main loop is running
+            cli(); leds_set( leds_get() | B_L4 ); sei();
+            for (volatile uint32_t i =0; i<30000; i++) ;
+            cli(); leds_set( leds_get() & ~B_L4 ); sei();
+            for (volatile uint32_t i =0; i<30000; i++) ;
+        }
+
     }
 }
 
