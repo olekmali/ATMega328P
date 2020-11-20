@@ -1,4 +1,4 @@
-//* USART1 interrupt-based library - implementation file *
+//* USART0 interrupt-based library - implementation file *
 #include "bios_uart0_int.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>

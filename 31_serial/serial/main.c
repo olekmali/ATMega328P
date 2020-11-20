@@ -1,4 +1,4 @@
-//* testing USART1 - main.c *
+//* testing USART0 - main.c *
 #include "bios_uart0.h"
 #include "bios_leds.h"
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-//* testing USART1 with receive data interrupt - main.c *
+//* testing USART0 with receive data interrupt - main.c *
 #include "bios_uart0_int.h"
 #include "bios_leds.h"
 #include <stdlib.h>

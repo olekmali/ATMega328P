@@ -2,7 +2,6 @@
 #include "bios_external_int.h"
 #include "bios_leds.h"
 #include "bios_keys.h"
-#include <stdlib.h>
 #include <avr/interrupt.h>
 
 #define F_CPU (16000000UL)

@@ -1,4 +1,4 @@
-//* testing USART1 - main.c *
+//* testing USART0 - main.c *
 #include "bios_adc_sleep.h"
 #include "bios_leds.h"
 #include "bios_keys.h"

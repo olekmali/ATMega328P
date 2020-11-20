@@ -1,4 +1,4 @@
-//* USART1 library - implementation file - 2019 *
+//* USART0 library - implementation file - 2019 *
 #include "bios_uart0.h"
 #include <avr/io.h>
 

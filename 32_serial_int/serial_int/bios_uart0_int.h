@@ -1,6 +1,6 @@
-//* USART1 interrupt-based library - header file *
-#ifndef BIOS_UART1_INT_H_
-#define BIOS_UART1_INT_H_
+//* USART0 interrupt-based library - header file *
+#ifndef BIOS_UART0_INT_H_
+#define BIOS_UART0_INT_H_
 #include <stdint.h>
 
 
