@@ -4,17 +4,17 @@
 #include <avr/interrupt.h>
 
 static volatile uint8_t  channel       = 0;
-static volatile uint8_t  latest_results[ADC_CNT] = {0};
+static volatile uint8_t  latest_results[6] = {0}; // reserve storage for all single channels
 static volatile uint8_t  new_results   = 0;
 
 void adc_initialize (void)
 {
     ADCSRA  |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) | (1<<ADIE);  // Set ADC clock to 125kHz (==16MHz/128), enable ADC complete interrupt
-    ADMUX    = 0;                   // for now let us use the very 1st channel
+    ADMUX    = ADC_CH_MIN;          // for now let us use the very 1st channel
     ADMUX   |= (1 << REFS0);        // use VCC as Vref         (==AVCC==5V)
     ADMUX   |= (1 << ADLAR);        // left justify the result so that 8bits can be read from the high register
                                     // this works well if you do not need to have a 4bit cushion to prevent overflow on computations
-    
+
     ADCSRA  |= (1 << ADEN);         // start ADC
 }
 
@@ -26,16 +26,15 @@ void adc_shutdown (void)
 
 void adc_startRound  (void)
 {
-//  ADMUX = ( ADMUX & 0xE0 ) | ( 0x1F & channel);
-    ADMUX = ( ADMUX & 0xE0 );
-    channel = 0;
+    channel = ADC_CH_MIN;
+    ADMUX = ( ADMUX & 0xE0 ) | ( 0x1F & channel);
     ADCSRA |= (1 << ADSC);  // start conversion
 }
 
 ISR(ADC_vect)
 {
     latest_results[channel] = ADCH;
-    if( channel == (ADC_CNT-1) )
+    if( channel == (ADC_CH_MAX) )
     {
         new_results = 1;
     } else {
