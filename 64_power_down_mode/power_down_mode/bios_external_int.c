@@ -34,6 +34,7 @@ void External_Int1_shutdown ()
 
 void External_Int0_chg_mode (uint8_t mode)
 {
+    uint8_t sreg_save = SREG;                           // Preserve Current Interrupt Status
     cli();
     uint8_t eicra_old = EICRA & ~(1<<ISC01|1<<ISC00);   // remove the old mode status
     switch (mode)
@@ -51,7 +52,7 @@ void External_Int0_chg_mode (uint8_t mode)
             EICRA = eicra_old | 1<<ISC01 | 1<<ISC00;
         break;
     } // switch
-    sei();
+    SREG = sreg_save;                                   // restore interrupts
 }
 
 void External_Int1_chg_mode (uint8_t mode)
