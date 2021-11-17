@@ -18,7 +18,7 @@ void Timer2_PWM_initialize ()
 
 void Timer2_PWM_shutdown ()
 {
-    DDRB   = DDRB & ~(1<<7);
+    DDRB   = DDRB & ~0b00001000;
     OCR2A  = 0;     // PWM at 0%
     TCCR2A = 0;     // shut down
     TCCR2B = 0;     // shut down
