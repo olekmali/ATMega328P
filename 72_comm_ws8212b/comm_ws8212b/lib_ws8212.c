@@ -38,7 +38,7 @@
 static inline void sendByte(uint8_t val)
 {
     for (uint8_t i=8; i>0; i--) {
-        if ((val&0b10000000)==0 ) {
+        if ((val&0b10000000)==0 ) {             // 2 or 3 clk depending on branch
             WS8212Bport |= WS8212Bbit;          // 3 clk
             _delay_us(0.1); // reduced to account for timing of the next line
             // Note: Release mode optimizes more for mem size which changes timing of C code
