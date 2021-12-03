@@ -5,9 +5,15 @@
 
 #include <stdlib.h> // for random number generator
 
-#define ntests 5U
-#define nneopx 2U
+#define ntests 11U
+#define nneopx  2U
 const rgb_t Test[ntests][nneopx] = {
+    { {255, 255, 255}, {255, 255, 255} },
+    { {255,   0,   0}, {255,   0,   0} },
+    { {  0, 255,   0}, {  0, 255,   0} },
+    { {  0,   0, 255}, {  0,   0, 255} },
+    { {255, 255, 255}, {255, 255, 255} },
+    { {  0,   0,   0}, {  0,   0,   0} },
     { {255,   0,   0}, {  0, 255,   0} },
     { {  0, 255,   0}, {  0,   0, 255} },
     { {  0,   0, 255}, {255,   0,   0} },

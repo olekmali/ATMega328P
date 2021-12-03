@@ -37,7 +37,7 @@
 
 static inline void sendByte(uint8_t val)
 {
-    for (uint8_t i=8; i>0; i--) {
+    for (uint8_t i=8; i!=0; i--) {               // i-- 1clk, i!=0 2clk
         if ((val&0b10000000)==0 ) {             // 2 or 3 clk depending on branch
             WS8212Bport |= WS8212Bbit;          // 3 clk
             _delay_us(0.1); // reduced to account for timing of the next line
@@ -47,14 +47,13 @@ static inline void sendByte(uint8_t val)
             _delay_us(1);   // just bare minimum as more time will be spent in loops
         } else {
             WS8212Bport |= WS8212Bbit;          // 3 clk
-            _delay_us(0.6); // reduced to account for timing of the next line
+            _delay_us(0.5); // reduced to account for timing of the next line
             // Note: Release mode optimizes more for mem size which changes timing of C code
             //      and delay above is still above 0 bit timing abd below reset timing
             WS8212Bport &= ~WS8212Bbit;         // 3 clk ( 0.18us)
             _delay_us(1);   // just bare minimum as more time will be spent in loops
         }
         val=val<<1;                             // 1 clk
-                                                // i-- 1clk, i>0 2clk
     }
 }
 
@@ -70,8 +69,8 @@ void ws8212_program(const rgb_t data[], uint8_t length) {
     uint8_t sreg=SREG;  //save SREG
     cli();              //clear interrupts
     for (uint8_t i=0; i<length; i++) {
-        sendByte(data[i].r);
         sendByte(data[i].g);
+        sendByte(data[i].r);
         sendByte(data[i].b);
     }
     // line status is left as low which prompts restart of the programming mode
