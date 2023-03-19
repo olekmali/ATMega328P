@@ -1,9 +1,7 @@
-//* blink and toggle in c - main.c for test 0 *
+//* blink and toggle in c - test 0 - check if buttons and LEDs work *
 #include "bios_leds.h"
 #include "bios_keys.h"
-// #include "library.h"
 
-// This test should work out of the box without your library
 int main(void)
 {
     leds_init();

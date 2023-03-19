@@ -1,4 +1,4 @@
-//* blink and toggle in c - test 4 - toggling finally works *
+//* blink and toggle in c - test 7 - looking at a button without an oscilloscope *
 #include <stdint.h>
 #include "bios_leds.h"
 #include "bios_keys.h"
@@ -16,24 +16,28 @@ int main()
     buttons_old = keys_get();
     while(1)
     {
-        leds_current = leds_current ^ 0b00100000;
-
         uint8_t buttons_current = keys_get();
 
-        // replace 0b00000001 with a different bit set, e.g., 0b00000010, 0b00000011
-        // what happens then?
+        // reset the button press count
+        if ( (buttons_current & 0b00000010) !=0 ) {
+            leds_current = 0;
+        }
+
+        // does it always toggle only once on press?
         if ( ( (buttons_old ^ buttons_current)& 0b00000001) != 0 )
         {
-            if ( (buttons_current & 0b00000001) !=0 ) // toggle on press but not again on release
+            if ( (buttons_current & 0b00000001) !=0 )
             {
-                leds_current = leds_current ^ 0b00000001;
+                leds_current++;
             }
         }
 
         buttons_old = buttons_current;
 
         leds_set(leds_current);
-        _delay_ms(100);
+        // _delay_ms(1); // <- try minimum time delay when 
+        // no multiple button press are recorded over at least 10 attempts 
+        // and then double that time for safety
     }
     return(0);
 }

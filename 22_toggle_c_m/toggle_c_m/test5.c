@@ -1,44 +1,40 @@
-//* blink and toggle in c with key mapping - main.c for test 5 *
+//* blink and toggle in c - test 5 - coded more professionally *
 #include <stdint.h>
 #include "bios_leds.h"
 #include "bios_keys.h"
-#include "library.h"
 
-// constant values
-#define MAP_SIZE  4
-// and we use the 6th LED (5 when counting from 0) for "alive" blinking
-#define LED_ALIVE 5
+#define F_CPU (16000000UL)
+#include <util/delay.h>
 
-int main(void)
+// this is coded more professionally without magics numbers in the code
+#define B_ONE 0b00000001
+#define L_ONE 0b00000001
+#define L_ALIVE 0b00100000
+
+
+int main()
 {
-    // initialization code
     leds_init();
     keys_init();
 
-    // constant data
-    // Note: expressions (1<<const) are known at the compilation time and are replaced by resulting constant values - no code!
-    /* static */ const uint8_t map_keys[MAP_SIZE] = { B_K4, B_K5, B_K6, B_K7 };
-    /* static */ const uint8_t map_leds[MAP_SIZE] = { B_L0, B_L1, B_L2, B_L3 };
-
-    // variables
-    uint8_t led_current = 1<<LED_ALIVE;  // LED are off except for the "alive" LED
-    uint8_t buttons_current = keys_get();
-    // main program super loop
+    uint8_t buttons_old;
+    uint8_t leds_current = 0;
+    buttons_old = keys_get();
     while(1)
     {
-        uint8_t buttons_old = buttons_current;
+        leds_current = leds_current ^ L_ALIVE;
 
-        led_current = toggle_bit(led_current, (1<<LED_ALIVE) );
+        uint8_t buttons_current = keys_get();
 
-        buttons_current = keys_get();
-
-        for(uint8_t i=0; i<MAP_SIZE; i++) {
-            if ( 0!=check_button(buttons_old, buttons_current, map_keys[i] ) )
-                led_current = toggle_bit(led_current, map_leds[i]);
+        if ( ( (buttons_old ^ buttons_current) & B_ONE) != 0  &&  ( (buttons_current & B_ONE) !=0 ))
+        {
+            leds_current = leds_current ^ L_ONE;
         }
 
-        leds_set(led_current);
-        delay(100);
+        buttons_old = buttons_current;
+
+        leds_set(leds_current);
+        _delay_ms(100);
     }
     return(0);
 }

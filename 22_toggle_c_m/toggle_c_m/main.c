@@ -1,30 +1,40 @@
-//* bit manipulaiton demos *
+//* blink and toggle in c - test 5 - coded more professionally *
 #include <stdint.h>
 #include "bios_leds.h"
 #include "bios_keys.h"
-#include "library.h"
 
-#define LED_ALIVE (1<<5)
+#define F_CPU (16000000UL)
+#include <util/delay.h>
 
-int main(void)
+// this is coded more professionally without magics numbers in the code
+#define B_ONE 0b00000001
+#define L_ONE 0b00000001
+#define L_ALIVE 0b00100000
+
+
+int main()
 {
     leds_init();
     keys_init();
 
-    uint8_t leds   = 1;
-    uint8_t toggle = 0;
-    // leds and toggle are operated independently
-    // and are merged just before outputting
+    uint8_t buttons_old;
+    uint8_t leds_current = 0;
+    buttons_old = keys_get();
     while(1)
     {
-        toggle = toggle ^ LED_ALIVE;
-        leds_set(leds | toggle);
-        leds = leds >> 1;
-        if ( leds == 0 )
+        leds_current = leds_current ^ L_ALIVE;
+
+        uint8_t buttons_current = keys_get();
+
+        if ( ( (buttons_old ^ buttons_current) & B_ONE) != 0  &&  ( (buttons_current & B_ONE) !=0 ))
         {
-            leds = 0b00010000;
+            leds_current = leds_current ^ L_ONE;
         }
-        delay(100);
+
+        buttons_old = buttons_current;
+
+        leds_set(leds_current);
+        _delay_ms(100);
     }
     return(0);
 }

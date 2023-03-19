@@ -71,15 +71,15 @@
     <BootSegment>2</BootSegment>
     <AsfFrameworkConfig>
       <framework-data>
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.44.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.44.0" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
     <preserveEEPROM>true</preserveEEPROM>
     <ResetRule>0</ResetRule>
@@ -179,12 +179,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="bios_leds.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="library.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="library.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
