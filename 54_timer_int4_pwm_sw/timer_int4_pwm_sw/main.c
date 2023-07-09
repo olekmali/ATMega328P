@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------------
 // Global constant(s)
 //------------------------------------------------------------------------------------
-typedef uint8_t pwmcnt_t;           // must hold PWM resolution number below
+typedef uint16_t pwmcnt_t;          // must hold PWM resolution number below
 
 #define PWM_FREQUENCY        50UL   // 20 ms servo period - data sheet fixed
 #define PWM_RESOLUTION      200U    // ** set based on the desired SERVO_STEPS, min value is 200 **
