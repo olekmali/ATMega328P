@@ -10,16 +10,16 @@ void External_Int0_initialize ( uint8_t mode, void (*handle_fn)(void) )
 {
     External_interrupt0_function = handle_fn;
     External_Int0_chg_mode(mode);
-    EIMSK = EIMSK | 1<<INT0;
-    EIFR  = EIFR  | 1<<INTF0;
+    EIMSK = EIMSK |   1<<INT0;
+    EIFR  = EIFR  & ~(1<<INTF0);
 }
 
 void External_Int1_initialize ( uint8_t mode, void (*handle_fn)(void) )
 {
     External_interrupt1_function = handle_fn;
     External_Int1_chg_mode(mode);
-    EIMSK = EIMSK | 1<<INT1;
-    EIFR  = EIFR  | 1<<INTF1;
+    EIMSK = EIMSK |   1<<INT1;
+    EIFR  = EIFR  & ~(1<<INTF1);
 }
 
 void External_Int0_shutdown ()
@@ -34,47 +34,18 @@ void External_Int1_shutdown ()
 
 void External_Int0_chg_mode (uint8_t mode)
 {
-    uint8_t sreg_save = SREG;                           // Preserve Current Interrupt Status
+    uint8_t sreg_save = SREG;   // Preserve Current Interrupt Status
     cli();
-    uint8_t eicra_old = EICRA & ~(1<<ISC01|1<<ISC00);   // remove the old mode status
-    switch (mode)
-    {
-        case EXT_INT_MODE_pin_low:
-            EICRA = eicra_old;
-        break;
-        case EXT_INT_MODE_pin_hi:
-            EICRA = eicra_old | 1<<ISC00;
-        break;
-        case EXT_INT_MODE_pin_falle:
-            EICRA = eicra_old | 1<<ISC01;
-        break;
-        case EXT_INT_MODE_pin_raise:
-            EICRA = eicra_old | 1<<ISC01 | 1<<ISC00;
-        break;
-    } // switch
-    SREG = sreg_save;                                   // restore interrupts
+    EICRA = ( EICRA & ~(1<<ISC01|1<<ISC00) ) | (mode & 0x03);
+    SREG = sreg_save;           // restore interrupts
 }
 
 void External_Int1_chg_mode (uint8_t mode)
 {
+    uint8_t sreg_save = SREG;   // Preserve Current Interrupt Status
     cli();
-    uint8_t eicra_old = EICRA & ~(1<<ISC11|1<<ISC10);   // remove the old mode status
-    switch (mode)
-    {
-        case EXT_INT_MODE_pin_low:
-            EICRA = eicra_old;
-        break;
-        case EXT_INT_MODE_pin_hi:
-            EICRA = eicra_old | 1<<ISC10;
-        break;
-        case EXT_INT_MODE_pin_falle:
-            EICRA = eicra_old | 1<<ISC11;
-        break;
-        case EXT_INT_MODE_pin_raise:
-            EICRA = eicra_old | 1<<ISC11 | 1<<ISC10;
-        break;
-    } // switch
-    sei();
+    EICRA = ( EICRA & ~(1<<ISC11|1<<ISC10) ) | ( (mode & 0x03)<<ISC10 );
+    SREG = sreg_save;           // restore interrupts
 }
 
 
