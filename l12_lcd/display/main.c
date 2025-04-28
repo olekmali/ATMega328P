@@ -18,7 +18,7 @@ inline void halt()     { while(1) ; }
 
 
 // this test allows you to do the final tweak of the delay function
-int main()
+int main(void)
 {
     L5init();
     lcd_init();

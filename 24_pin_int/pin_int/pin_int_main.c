@@ -35,11 +35,11 @@ void MyInterruptHander() {
 }
 
 
-int main()
+int main(void)
 {
     leds_init();
     setup_PC012();
-    PCINT_PINC_initialize( 0b00000111, MyInterruptHander );
+    PCINT_PINC_initialize( 0b00000111, &MyInterruptHander );
 
     sei();
     while(1)

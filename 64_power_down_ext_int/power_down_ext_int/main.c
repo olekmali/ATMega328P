@@ -32,8 +32,8 @@ int main(void)
     keys_init();
 
     External_Int_Pins_Enable();
-    External_Int0_initialize(EXT_INT_MODE_pin_falle, MyExternalIntFN);
-    External_Int1_initialize(EXT_INT_MODE_pin_low,   MyExternalIntFN);
+    External_Int0_initialize(EXT_INT_MODE_pin_falle, &MyExternalIntFN);
+    External_Int1_initialize(EXT_INT_MODE_pin_low,   &MyExternalIntFN);
 
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);    // Note: this will not awake on a Timer event
     // set_sleep_mode(SLEEP_MODE_PWR_SAVE); // Note: this will awake on s Timer event

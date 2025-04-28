@@ -146,7 +146,7 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( INT_FRQ, MyTimerFN, timer_prescale_64 );
+    Timer1_initialize( INT_FRQ, &MyTimerFN, timer_prescale_64 );
 
     sei();
 

@@ -17,11 +17,11 @@ int main(void)
     mpu_init();
     mpu_data_t accel;
 
-	uart0_puts("Read accelerometer data.\r\n");
+    uart0_puts("Read accelerometer data.\r\n");
     while (1)
     {
         char buffer[15]; // make sure it is big enough!
-		mpu_get_accel(&accel);
+        mpu_get_accel(&accel);
 
         dtostrf(accel.x, 8, 2, buffer);
         uart0_puts(buffer);
@@ -30,7 +30,7 @@ int main(void)
         dtostrf(accel.z, 8, 2, buffer);
         uart0_puts(buffer);
         uart0_puts("\r\n");
-		_delay_ms(200);
+        _delay_ms(200);
     }
 }
 

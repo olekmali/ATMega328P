@@ -41,8 +41,8 @@ int main(void)
     keys_init();
 
     External_Int_Pins_Enable();
-    External_Int0_initialize(EXT_INT_MODE_pin_falle, MyExtIntFNver1);   // test each of the modes - this triggered once
-    External_Int1_initialize(EXT_INT_MODE_pin_low,   MyExtIntFNver1);   // test each of the modes - this triggered over and over again while button pressed
+    External_Int0_initialize(EXT_INT_MODE_pin_falle, &MyExtIntFNver1);   // test each of the modes - this triggered once
+    External_Int1_initialize(EXT_INT_MODE_pin_low,   &MyExtIntFNver1);   // test each of the modes - this triggered over and over again while button pressed
     sei(); // enable global interrupts, all circuitry must be initialized prior to this event
 
     uint8_t keep_busy = 0;

@@ -45,7 +45,7 @@ int main1(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( INT_FRQ, MyTimerFN, timer_prescale_64 );
+    Timer1_initialize( INT_FRQ, &MyTimerFN, timer_prescale_64 );
     // Note: for xtal of 16MHz, 16-bit timer and prescale of 64
     // we got interrupt frequency range of ____ Hz min, _____ kHz max (Exam question)
 

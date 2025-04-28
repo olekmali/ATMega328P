@@ -109,7 +109,7 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( INT_FREQUENCY , MyTimerFN, timer_prescale_1 );
+    Timer1_initialize( INT_FREQUENCY , &MyTimerFN, timer_prescale_1 );
 
     // Set the PWM rates for the PWM channels
     // Note: PWMs needs to be in range 0...PWM_RESOLUTION, not in %

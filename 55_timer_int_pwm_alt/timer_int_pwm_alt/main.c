@@ -44,7 +44,7 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( INT_FREQUENCY, MyTimerFN, timer_prescale_1);
+    Timer1_initialize( INT_FREQUENCY, &MyTimerFN, timer_prescale_1);
     //  make sure that FRQclock / prescaler < 65536 as Timer1 is a 16-bit timer
 
     // Set the PWM rates for the PWM channels

@@ -50,7 +50,7 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize(TIMER1_FRQ, MySleepyTimerFN, timer_prescale_256);
+    Timer1_initialize(TIMER1_FRQ, &MySleepyTimerFN, timer_prescale_256);
 
     External_Int_Pins_Enable();
     External_Int0_initialize(EXT_INT_MODE_pin_low, MyExternalIntFN);

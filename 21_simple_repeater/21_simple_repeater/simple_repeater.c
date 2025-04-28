@@ -1,7 +1,7 @@
 # include <avr/io.h>
 # include <stdint.h>
 
-int main (void)
+int main(void)
 {
     // initialize LED output pins on lower 4 bits of Port B
     DDRB  = DDRB  | 0x0F;       // affect DDR only the lower pins - set to push-pull out/1

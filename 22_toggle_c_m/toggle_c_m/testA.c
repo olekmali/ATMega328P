@@ -6,7 +6,7 @@
 #define F_CPU (16000000UL)
 #include <util/delay.h>
 
-int main()
+int main(void)
 {
     leds_init();
     keys_init();

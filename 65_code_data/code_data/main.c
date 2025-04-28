@@ -310,7 +310,7 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( SAMPLING__FRQ , MyTimerFN, timer_prescale_1 );
+    Timer1_initialize( SAMPLING__FRQ , &MyTimerFN, timer_prescale_1 );
     Timer2_PWM_initialize();    // change and observe PortB.7
 
     sei();

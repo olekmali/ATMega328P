@@ -23,7 +23,7 @@ void MyCharReceivedFN (char c)
 
 int main(void)
 {
-    uart0_initialize(uart_bps_9600, MyCharReceivedFN);
+    uart0_initialize(uart_bps_9600, &MyCharReceivedFN);
 
     leds_init();
     leds_set(0);

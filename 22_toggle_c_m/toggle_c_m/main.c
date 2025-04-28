@@ -12,7 +12,7 @@
 #define L_ALIVE 0b00100000
 
 
-int main()
+int main(void)
 {
     leds_init();
     keys_init();

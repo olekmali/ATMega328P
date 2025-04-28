@@ -14,7 +14,7 @@
 // Global constant(s)
 //------------------------------------------------------------------------------------
 #define INT_FREQUENCY         1L
-#define MAIN_LOOP_WAKEUP     10 // do somehting only once every 10 interrupts
+#define MAIN_LOOP_WAKEUP     10 // do something only once every 10 interrupts
 
 //------------------------------------------------------------------------------------
 // Global variable(s) used as bridge to pass parameters to the interrupts
@@ -57,7 +57,7 @@ void MyTimerFN (void)
 void do_something() {
     leds_set( leds_get() | B_L4 );
     _delay_ms(500);
-    // wdt_reset(); use WDT restet intermitently
+    // wdt_reset(); use WDT reset intermittently
     // if the whole task takes more than 1.7 seconds
     leds_set( leds_get() & ~B_L4 );
 }
@@ -67,7 +67,7 @@ int main(void)
 {
     wdt_enable(7); //// 7 - 1.8s
     leds_init();
-    Timer1_initialize( INT_FREQUENCY , MyTimerFN, timer_prescale_1024 );
+    Timer1_initialize( INT_FREQUENCY , &MyTimerFN, timer_prescale_1024 );
     // Note: 1024 prescaler allows for the interrupt to go as low as 0.25Hz @ 16MHz clock
 
     uint8_t loop_count = 0;

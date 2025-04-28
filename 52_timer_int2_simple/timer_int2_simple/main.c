@@ -22,7 +22,7 @@ int main(void)
     leds_init();
     leds_set(0);
     keys_init();
-    Timer1_initialize( INT_FREQUENCY ,myInterruptFunctionality, INT_PRESCALE);
+    Timer1_initialize( INT_FREQUENCY ,&myInterruptFunctionality, INT_PRESCALE);
 
     sei();
     while (1)

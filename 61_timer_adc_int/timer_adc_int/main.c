@@ -35,7 +35,7 @@ int main(void)
     keys_init();
 
     adc_initialize();
-    Timer1_initialize(1000, MyTimerFN, timer_prescale_1);
+    Timer1_initialize(1000, &MyTimerFN, timer_prescale_1);
 
     sei();
 

@@ -38,7 +38,7 @@ int main(void)
     leds_set(0);
     keys_init();
 
-    Timer1_initialize( INT_FREQUENCY, MyTimerFN, timer_prescale_8 );
+    Timer1_initialize( INT_FREQUENCY, &MyTimerFN, timer_prescale_8 );
     // Exam question: why the prescaler of  1 was used for interrupt frequency of 10kHz and xtal of 16MHz?
     // Exam question: why the prescaler of  8 was used for interrupt frequency of 100Hz and xtal of 16MHz?
     // Exam question: why the prescaler of 64 was used for interrupt frequency of  10Hz and xtal of 16MHz?
