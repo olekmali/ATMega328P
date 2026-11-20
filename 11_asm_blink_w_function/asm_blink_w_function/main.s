@@ -1,4 +1,5 @@
-// * blinking LED program *
+
+// * 1000 ms period blinking LED program - version with set/clear bit *
 #include <avr/io.h>
 
 
@@ -13,9 +14,9 @@ _start:
 ; this is the part of the loader program that initializes the stack etc.
 .TEXT
 start:
-    ldi     R16,                    0xFF && (RAMEND>>8)
+    ldi     R16,                    0xFF & (RAMEND>>8)
     out     _SFR_IO_ADDR(SPH),      R16
-    ldi     R16,                    0xFF && RAMEND
+    ldi     R16,                    0xFF & RAMEND
     out     _SFR_IO_ADDR(SPL),      R16
 
 
@@ -32,24 +33,24 @@ main_initialize:
 main_superloop:
     ; LED on
     sbi     _SFR_IO_ADDR(PORTB),  3
-    ; and wait
-    ldi     R21,    0
-    ldi     R20,    100
+    ; and wait 500 ms
+    ldi     r21,    hi8(500)
+    ldi     r20,    lo8(500)
     rcall   delay_in_ms
 
     ; LED off
     cbi     _SFR_IO_ADDR(PORTB),  3
-    ; and wait
-    ldi     r21,    0
-    ldi     r20,    100
+    ; and wait 500 ms
+    ldi     r21,    hi8(500)
+    ldi     r20,    lo8(500)
     rcall   delay_in_ms
 
-    ; and do ti forever
+    ; and do it forever
     rjmp main_superloop
 
 
     ; this function
-    ;   - T.B.A. receives a short int variable in registers [r21,r20]
+    ;   - receives an unsigned short int variable in registers [r21,r20]
     ;   - causes time delay of that many milliseconds by wasting time and energy
     ;
 delay_in_ms:
@@ -57,31 +58,29 @@ delay_in_ms:
     in      R16, _SFR_IO_ADDR(SREG)
     push    R16
 
-    .equ    OneMS,  16000000 / 5 / 1000 ; 16000 for quartz FRQ, /1000 for 1 ms, /5 for the duration of the loop
+    .equ    OneMS,  3999 ; started with an approximation and then used proportion to adjust to be clsoe to 1 ms
 
     push    R17
     push    R18
-    push    R19
 
-; TO DO: add the loop to run the delay [r21,r20] times
 ms_counter_loop:
-
-    ldi     R19,         0xFF & ( OneMS >> 16 )
-    ; note -- we only need two registers but that would speed up the loop and mabye we would have to go back to three registers to keep the count
-    ldi     R18,         hi8  (OneMS)      ; or 0xFF & ( OneMS >> 8 )
-    ldi     R17,         lo8  (OneMS)      ; or 0xFF &   OneMS
-
-delay_loop:
-    subi    R17,         1
-    sbci    R18,         0
-    sbci    R19,         0
-    brcc    delay_loop
-
+    ; The outer loop runs the delay [r21,r20] times
     subi    R20,        1
     sbci    R21,        0
-    brcc    ms_counter_loop
+    brcs    exit_loop   
 
-    pop     R19
+    ; note -- we only need two registers but that would speed up the loop and mabye we would have to go back to three registers to keep the count
+    ldi     R18,        hi8(OneMS)      ; or 0xFF & ( OneMS >> 8 )
+    ldi     R17,        lo8(OneMS)      ; or 0xFF &   OneMS
+delay_loop:
+    ; here be a one millisecond inner loop that uses unsigned short int countdown to zero
+    subi    R17,        1
+    sbci    R18,        0
+    brcc    delay_loop
+    rjmp    ms_counter_loop
+
+exit_loop:
+    ; restoring the original content of used registers
     pop     R18
     pop     R17
 

@@ -19,7 +19,7 @@
 #define PWR_MGMT_2          0x6C
 
 
-void mpu_init(void)
+mpu_status_t mpu_init(void)
 {
     uint8_t data1[2] = {PWR_MGMT_1, 0b10000000};        // reset device
     ret_code_t e1 = tw_master_transmit(MPU6050_ADDR, data1, sizeof(data1), false);
@@ -32,30 +32,37 @@ void mpu_init(void)
     uint8_t data4[2] = {PWR_MGMT_2, 0b00000111};        // disable gyroscopes and save 3.4 mA
     ret_code_t e4 = tw_master_transmit(MPU6050_ADDR, data4, sizeof(data4), false);
     if ( (e1!=SUCCESS) || (e2!=SUCCESS) || (e3!=SUCCESS) || (e4!=SUCCESS) ) {
-        /* if desired, insert code for reporting the error */
+        return(mpu_ERROR);
     }
+    return(mpu_OK);
 }
 
-static void mpu_get_accel_raw(mpu_data_t* mpu_data) {
+mpu_status_t mpu_get_accel_raw(mpu_data_t* mpu_data) {
     ret_code_t error_code;
     /* 2 registers for each of accel x, y and z data */
     uint8_t data[6];
 
     data[0] = ACCEL_XOUT_H;
     error_code = tw_master_transmit(MPU6050_ADDR, data, 1, true);
-    if (error_code!=SUCCESS) { /* if desired, insert code for reporting the error */ }
+    if (error_code!=SUCCESS) return(mpu_ERROR);
     error_code = tw_master_receive(MPU6050_ADDR, data, sizeof(data));
-    if (error_code!=SUCCESS) { /* if desired, insert code for reporting the error */ }
+    if (error_code!=SUCCESS) return(mpu_ERROR);
 
     /* Default accel config +/- 2g */
     mpu_data->x = ( (int16_t)data[0] << 8 | data[1] ) / 16384.0;
     mpu_data->y = ( (int16_t)data[2] << 8 | data[3] ) / 16384.0;
     mpu_data->z = ( (int16_t)data[4] << 8 | data[5] ) / 16384.0;
+
+    return(mpu_OK);
 }
 
-void mpu_get_accel(mpu_data_t* mpu_data) {
-    mpu_get_accel_raw(mpu_data);
-    mpu_data->x = mpu_data->x * 9.81;
-    mpu_data->y = mpu_data->y * 9.81;
-    mpu_data->z = mpu_data->z * 9.81;
+mpu_status_t mpu_get_accel(mpu_data_t* mpu_data) {
+    if ( mpu_get_accel_raw(mpu_data) == mpu_OK ) {
+        mpu_data->x = mpu_data->x * 9.81;
+        mpu_data->y = mpu_data->y * 9.81;
+        mpu_data->z = mpu_data->z * 9.81;        
+        return( mpu_OK );
+    } else {
+        return( mpu_ERROR);
+    }
 }

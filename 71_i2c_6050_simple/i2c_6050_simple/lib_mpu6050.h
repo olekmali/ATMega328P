@@ -9,7 +9,9 @@ typedef struct
     float z;
 } mpu_data_t;
 
-void mpu_init(void);
-void mpu_get_accel(mpu_data_t* mpu_data);
+typedef enum { mpu_OK, mpu_ERROR } mpu_status_t;
+
+mpu_status_t mpu_init(void);
+mpu_status_t mpu_get_accel(mpu_data_t* mpu_data);
 
 #endif
